@@ -2,7 +2,7 @@
 
 Qt.include("sha1.js")
 
-function requestToken(tokenFunc, errorFunc)
+function loadToken(tokenFunc, errorFunc, tokenData)
 {
     var baseUrl = "https://api.dropbox.com/1/oauth/request_token";
     var consumerKey = "<enter-key>";
@@ -14,9 +14,10 @@ function requestToken(tokenFunc, errorFunc)
         + "&oauth_nonce=" + nonce
         + "&oauth_signature_method=HMAC-SHA1"
         + "&oauth_timestamp=" + timestamp
+        + (!tokenData ? "" : "&oauth_token=" + tokenData.token)
         + "&oauth_version=1.0";
 
-    var signKey = encodeURIComponent(consumerSecret) + "&";
+    var signKey = encodeURIComponent(consumerSecret) + "&" + (!tokenData ? "" : encodeURIComponent(tokenData.secret));
     var urlToSign = "GET&" + encodeURIComponent(baseUrl) + "&" + encodeURIComponent(signedParams);
     var signature = encodeURIComponent(b64_hmac_sha1(signKey, urlToSign));
 
@@ -28,6 +29,7 @@ function requestToken(tokenFunc, errorFunc)
         + ", oauth_nonce=\"" + nonce + "\""
         + ", oauth_signature_method=\"HMAC-SHA1\""
         + ", oauth_timestamp=\"" + timestamp + "\""
+        + (!tokenData ? "" : ", oauth_token=\"" + tokenData.token + "\"")
         + ", oauth_signature=\"" + signature + "\"";
 
     var xhr = new XMLHttpRequest;

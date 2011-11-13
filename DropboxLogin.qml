@@ -39,13 +39,19 @@ Item {
 
     QtObject {
         id: privObj
+        property string requestToken
+        property string requestTokenSecret
+        property string accessToken
+        property string accessTokenSecret
         function start() {
-            DropboxAuth.requestToken(
+            DropboxAuth.loadToken(
                         function(token, secret) {
+                            privObj.requestToken = token;
+                            privObj.requestTokenSecret = secret;
                             webView.url = "https://www.dropbox.com/1/oauth/authorize?oauth_token=" + token + "&oauth_callback=http://localhost"
                         },
                         function(errorCode) {
-                            console.log("FAILED: " + errorCode);
+                            console.log("REQUEST TOKEN FAILED: " + errorCode);
                             Qt.quit();
                         });
             rootItem.running = true;
@@ -83,7 +89,18 @@ Item {
                 var uidEnd = urlStr.indexOf("&", uidIndex);
                 if (uidEnd == -1) { uidEnd = urlStr.length; }
                 rootItem.userUid = urlStr.substring(uidIndex, uidEnd);
-                rootItem.accessToken = urlStr.substring(tokenIndex, tokenEnd);
+                DropboxAuth.loadToken(function(token, secret) {
+                                          privObj.accessToken = token;
+                                          privObj.accessTokenSecrot = secret;
+                                          rootItem.accessToken = token;
+                                      },
+                                      function(errorCode) {
+                                          console.log("ACCESS TOKEN FAILED: " + errorCode);
+                                          Qt.quit();
+                                      }, {
+                                          token: privObj.requestToken,
+                                          secret: privObj.requestTokenSecret
+                                      });
                 rootItem.stop();
                 processed = true;
             }
