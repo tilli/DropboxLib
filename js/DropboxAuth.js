@@ -4,7 +4,13 @@ Qt.include("sha1.js")
 
 function loadToken(tokenFunc, errorFunc, tokenData)
 {
-    var baseUrl = "https://api.dropbox.com/1/oauth/request_token";
+    var baseUrl;
+    if (!tokenData) {
+        baseUrl = "https://api.dropbox.com/1/oauth/request_token";
+    } else {
+        baseUrl = "https://api.dropbox.com/1/oauth/access_token";
+    }
+
     var consumerKey = "<enter-key>";
     var consumerSecret = "<enter-secret>";
     var timestamp = Math.floor((new Date()).getTime() / 1000).toString();
@@ -61,4 +67,5 @@ function loadToken(tokenFunc, errorFunc, tokenData)
     }
     xhr.open("GET", baseUrl, true);
     xhr.send();
+//    console.log(baseUrl + "?" + signedParams + "&oauth_signature=" + signature);
 }

@@ -91,7 +91,7 @@ Item {
                 rootItem.userUid = urlStr.substring(uidIndex, uidEnd);
                 DropboxAuth.loadToken(function(token, secret) {
                                           privObj.accessToken = token;
-                                          privObj.accessTokenSecrot = secret;
+                                          privObj.accessTokenSecret = secret;
                                           rootItem.accessToken = token;
                                       },
                                       function(errorCode) {
